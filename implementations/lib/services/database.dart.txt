@@ -1,0 +1,106 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:foodbook/models/foods.dart';
+
+class DatabaseService {
+  final String _uid = FirebaseAuth.instance.currentUser.uid;
+  final String _email = FirebaseAuth.instance.currentUser.email;
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
+  final CollectionReference foodsCollection =
+      FirebaseFirestore.instance.collection('foods');
+
+  Future updateUserfoods(Food food) async {
+    String url;
+    try {
+      var snapshot =
+          FirebaseStorage.instance.ref().child('/image/${food.name}@$_email');
+      await snapshot.putFile(food.image);
+      url = await snapshot.getDownloadURL();
+    } catch (e) {
+      print(e.toString());
+    }
+    try {
+      userCollection
+          .doc(_uid)
+          .collection('foods')
+          .doc('${food.name}@$_email')
+          .set({
+        'name': food.name,
+        'ingredients': food.ingredients,
+        'recipe': food.recipe,
+        'calories': food.calories,
+        'owner': _uid,
+        'url': url,
+      });
+      foodsCollection.doc('${food.name}@$_email').set({
+        'name': food.name,
+        'ingredients': food.ingredients,
+        'recipe': food.recipe,
+        'calories': food.calories,
+        'owner': _uid,
+        'url': url
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  //from one user:
+  List<Food> _userFoodFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return Food(
+        name: doc.data()['name'] ?? '',
+        ingredients: doc.data()['ingredients'] ?? '',
+        recipe: doc.data()['recipe'],
+        calories: doc.data()['calories'],
+        owner: doc.data()['owner'],
+        urlname: doc.data()['url'],
+      );
+    }).toList();
+  }
+
+  Stream<List<Food>> get userFood {
+    return userCollection
+        .doc(_uid)
+        .collection('foods')
+        .snapshots()
+        .map(_userFoodFromSnapshot);
+  }
+
+  //allfoods:
+  List<Food> _foodsFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return Food(
+        name: doc.data()['name'] ?? '',
+        ingredients: doc.data()['ingredients'] ?? '',
+        recipe: doc.data()['recipe'],
+        calories: doc.data()['calories'],
+        owner: doc.data()['owner'],
+        urlname: doc.data()['url'],
+      );
+    }).toList();
+  }
+
+  Stream<List<Food>> get allfoods {
+    return foodsCollection.snapshots().map(_foodsFromSnapshot);
+  }
+
+  Future deletefood(String name) async {
+    await userCollection
+        .doc(_uid)
+        .collection('foods')
+        .doc('$name@$_email')
+        .delete();
+    await foodsCollection.doc('$name@$_email').delete();
+    try {
+      var snapshot =
+          FirebaseStorage.instance.ref().child('/image/$name@$_email');
+      await snapshot.delete();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+}

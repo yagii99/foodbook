@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/screens/home/homedrawer.dart';
+import 'package:foodbook/screens/home/menuwrapper.dart';
+
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  int _currentindex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: MyDrawer(),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'FoodBook',
+          style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'mvboli',
+              fontWeight: FontWeight.bold,
+              fontSize: 20),
+        ),
+        elevation: 0.0,
+        centerTitle: true,
+      ),
+      body: MenuWrapper(index: _currentindex),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentindex,
+        onTap: (val) {
+          setState(() {
+            _currentindex = val;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+        ],
+      ),
+    );
+  }
+}

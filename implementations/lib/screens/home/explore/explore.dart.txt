@@ -1,0 +1,28 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/models/foods.dart';
+import 'package:foodbook/screens/home/explore/explorelist.dart';
+import 'package:foodbook/services/database.dart';
+import 'package:provider/provider.dart';
+
+class Explore extends StatefulWidget {
+  @override
+  _ExploreState createState() => _ExploreState();
+}
+
+class _ExploreState extends State<Explore> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<List<Food>>.value(
+      value: DatabaseService().allfoods,
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/background.jpg'), fit: BoxFit.cover)),
+        child: Container(
+          child: ExploreList(),
+        ),
+      ),
+    );
+  }
+}

@@ -1,0 +1,23 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/screens/home/addfood.dart';
+import 'package:foodbook/screens/home/explore/explore.dart';
+import 'package:foodbook/screens/home/myfoods/myfoods.dart';
+
+class MenuWrapper extends StatefulWidget {
+  final int index;
+  MenuWrapper({this.index});
+  @override
+  _MenuWrapperState createState() => _MenuWrapperState();
+}
+
+class _MenuWrapperState extends State<MenuWrapper> {
+  @override
+  Widget build(BuildContext context) {
+    if (widget.index == 0)
+      return Explore();
+    else if (widget.index == 1)
+      return AddFood();
+    else
+      return MyFoods();
+  }
+}

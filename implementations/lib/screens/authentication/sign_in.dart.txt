@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/screens/authentication/authdrawer.dart';
+import 'package:foodbook/services/Auth.dart';
+import 'package:foodbook/screens/loading.dart';
+
+class SignIn extends StatefulWidget {
+  final Function toggleview;
+  SignIn({this.toggleview});
+  @override
+  _SignInState createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  final _formkey = GlobalKey<FormState>();
+  String _currentUserName = '';
+  String _currentPassword = '';
+  String error = '';
+  bool loading = false;
+  final AuthService _auth = AuthService();
+  @override
+  Widget build(BuildContext context) {
+    return loading
+        ? Loading()
+        : Scaffold(
+            drawer: Drawer(
+              child: MyDrawer(toggleview: widget.toggleview),
+            ),
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              iconTheme: IconThemeData(color: Colors.black),
+              backgroundColor: Colors.transparent,
+              title: Text(
+                'Sign in to FoodBook',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'mvboli',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+              elevation: 0,
+              centerTitle: true,
+            ),
+            body: Form(
+              key: _formkey,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/background.jpg'),
+                        fit: BoxFit.cover)),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'Email Address',
+                          hintStyle: TextStyle(
+                              fontFamily: 'Lato', fontWeight: FontWeight.bold),
+                        ),
+                        validator: (value) => value.isEmpty
+                            ? 'Please enter valid username'
+                            : null,
+                        onChanged: (value) {
+                          _currentUserName = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText: 'Password',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Lato',
+                                fontWeight: FontWeight.bold)),
+                        validator: (value) =>
+                            value.isEmpty ? 'Please Enter a password' : null,
+                        onChanged: (value) {
+                          _currentPassword = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        error,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      RaisedButton(
+                        color: Colors.pink[400],
+                        onPressed: () async {
+                          if (_formkey.currentState.validate()) {
+                            setState(() {
+                              loading = true;
+                            });
+                            dynamic result =
+                                await _auth.signInWithEmailAndPassword(
+                                    _currentUserName, _currentPassword);
+                            if (result == null) {
+                              setState(() {
+                                loading = false;
+                                error = 'Invalid Credentials';
+                              });
+                            }
+                          }
+                        },
+                        child: Text('Login',
+                            style: TextStyle(
+                              fontFamily: 'Lato',
+                              fontWeight: FontWeight.w900,
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+  }
+}

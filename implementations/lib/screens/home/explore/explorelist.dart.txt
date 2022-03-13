@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/screens/home/explore/explorefoodstile.dart';
+import 'package:provider/provider.dart';
+import 'package:foodbook/models/foods.dart';
+
+class ExploreList extends StatefulWidget {
+  @override
+  _ExploreListState createState() => _ExploreListState();
+}
+
+class _ExploreListState extends State<ExploreList> {
+  @override
+  Widget build(BuildContext context) {
+    final foods = Provider.of<List<Food>>(context) ?? [];
+    return ListView.builder(
+      itemCount: foods.length,
+      itemBuilder: (context, index) {
+        return ExploreFoodTile(food: foods[index]);
+      },
+    );
+  }
+}

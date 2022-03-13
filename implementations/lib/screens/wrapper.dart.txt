@@ -1,0 +1,17 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/models/user.dart';
+import 'package:foodbook/screens/authentication/authentication.dart';
+import 'package:foodbook/screens/home/home.dart';
+import 'package:provider/provider.dart';
+
+class Wrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<FoodbookUser>(context);
+    print(user);
+    if (user == null)
+      return Authenticate();
+    else
+      return Home();
+  }
+}

@@ -1,0 +1,51 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foodbook/models/user.dart';
+
+class AuthService {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  FoodbookUser _userFromFirebase(User user) {
+    return user != null ? FoodbookUser(uid: user.uid) : null;
+  }
+
+  Stream<FoodbookUser> get user {
+    return _auth.authStateChanges().map(_userFromFirebase);
+  }
+
+  Future signInWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential credential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      User user = credential.user;
+      return user;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future registerwithemailandpassword(String email, String password) async {
+    try {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User user = credential.user;
+      return user;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future signout() async {
+    try {
+      return await _auth.signOut();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future getEmail() async {
+    return await _auth.currentUser.email;
+  }
+}

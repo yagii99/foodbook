@@ -1,0 +1,19 @@
+import 'dart:io';
+
+class Food {
+  String name;
+  final String ingredients;
+  final String recipe;
+  final String calories;
+  final String owner;
+  final File image;
+  final String urlname;
+  Food(
+      {this.ingredients,
+      this.name,
+      this.recipe,
+      this.calories,
+      this.owner,
+      this.image,
+      this.urlname});
+}

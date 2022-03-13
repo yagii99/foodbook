@@ -1,0 +1,25 @@
+import 'package:flutter/material.dart';
+import 'package:foodbook/screens/authentication/register.dart';
+import 'package:foodbook/screens/authentication/sign_in.dart';
+
+class Authenticate extends StatefulWidget {
+  @override
+  _AuthenticateState createState() => _AuthenticateState();
+}
+
+class _AuthenticateState extends State<Authenticate> {
+  bool viewsignin = true;
+  void toggleview(bool view) {
+    setState(() {
+      viewsignin = view;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (viewsignin)
+      return SignIn(toggleview: toggleview);
+    else
+      return Register(toggleview: toggleview);
+  }
+}
